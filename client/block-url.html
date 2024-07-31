@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueo de URL</title>
+    <style>
+        /* Agrega tus estilos aquí */
+    </style>
+</head>
+<body>
+    <h1>Bloqueo de URL</h1>
+    <form id="block-url-form">
+        <label for="url">URL a Bloquear:</label>
+        <input type="text" id="url" name="url" required><br>
+
+        <button type="submit">Bloquear URL</button>
+    </form>
+
+    <h2>URLs Bloqueadas</h2>
+    <ul id="blocked-urls-list"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const response = await fetch('/api/url/blocked-urls', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const urls = await response.json();
+            const list = document.getElementById('blocked-urls-list');
+            urls.forEach(url => {
+                const li = document.createElement('li');
+                li.textContent = url.url;
+                list.appendChild(li);
+            });
+        });
+
+        document.getElementById('block-url-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const url = document.getElementById('url').value;
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('/api/url/block-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ url })
+            });
+
+            const result = await response.json();
+
+            if (response.status === 201) {
+                const list = document.getElementById('blocked-urls-list');
+                const li = document.createElement('li');
+                li.textContent = url;
+                list.appendChild(li);
+            } else {
+                alert(result.message);
+            }
+        });
+    </script>
+</body>
+</html>

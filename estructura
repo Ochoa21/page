@@ -1,0 +1,18 @@
+project-folder/
+│
+├── client/
+│   ├── block-url.html
+│   ├── login.html
+│   └── register.html
+│
+├── server/
+│   ├── models/
+│   │   └── User.js
+│   ├── routes/
+│   │   └── auth.js
+│   ├── .env
+│   ├── server.js
+│   ├── package.json
+│   └── package-lock.json
+│
+└── README.md
